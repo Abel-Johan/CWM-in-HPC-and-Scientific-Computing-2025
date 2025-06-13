@@ -12,8 +12,7 @@
 #SBATCH --job-name=vectoradd_memory
 
 # Use our reservation
-#SBATCH --reservation=training
-
+#SBATCH --reservation=250620-cwm
 
 
 module purge
