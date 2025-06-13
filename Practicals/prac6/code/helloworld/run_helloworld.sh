@@ -15,6 +15,6 @@
 #SBATCH --reservation=250620-cwm
 
 module purge
-module load CUDA/11.4.1-GCC-10.3.0
+module load CUDA
 
 ./helloworld
