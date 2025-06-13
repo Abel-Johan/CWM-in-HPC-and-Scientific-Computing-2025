@@ -12,7 +12,7 @@
 #SBATCH --job-name=heat
 
 # Use our reservation
-#SBATCH --reservation=training
+#SBATCH --reservation=250620-cwm
 
 
 
