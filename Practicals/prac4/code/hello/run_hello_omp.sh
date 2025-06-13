@@ -12,7 +12,7 @@
 #SBATCH --job-name=hello_omp
 
 # Use our reservation
-#SBATCH --reservation=training
+#SBATCH --reservation=250620-cwm
 
 
 module purge
