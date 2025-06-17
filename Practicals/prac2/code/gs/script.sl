@@ -12,7 +12,7 @@
 #SBATCH --job-name=gs
 
 # Use our reservation
-#SBATCH --reservation=training
+#SBATCH --reservation=250620-cwm
 
 # Use this to set the order and number of vectors
 rm -f in
