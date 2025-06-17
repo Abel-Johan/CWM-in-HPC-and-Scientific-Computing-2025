@@ -11,6 +11,7 @@
 
 // Define any constants that I need to use here
 const float PI = 3.1415;
+const float THICKNESS = 0.25; // thickness of lost barley rings
 
 // This is where I should put my function prototypes
 float area_of_circle(float radius); 
@@ -22,9 +23,9 @@ int main() {
 	int i = 0; // loop counter
 	float radius[5]; // array to store radii
 	float area[5]; // array to store areas
-	float total_area = 0;
-	float loss_in_kg;
-	float loss_in_pounds;
+	float total_area = 0; // total area lost
+	float loss_in_kg; // total barley lost in kg
+	float loss_in_pounds; // total barley lost in pounds
     // Next I need to get input from the user.
     // I'll do this by using a printf() to ask the user to input the radii.
 	printf("Input the radii of circles, ONE BY ONE\n");
@@ -68,9 +69,10 @@ int main() {
 
 float area_of_circle(float radius) {
 	extern const float PI;
+	extern const float THICKNESS;
 	float area;
 
-	area = PI * radius * radius;
+	area = 2 * PI * radius * THICKNESS;
 
 	return area;
 }
