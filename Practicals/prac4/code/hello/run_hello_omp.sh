@@ -1,7 +1,7 @@
 #!/bin/bash
 # set the number of nodes and processes per node
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks-per-node=16
 #SBATCH --partition=short
 
 # set max wallclock time
@@ -17,5 +17,8 @@
 
 module purge
 module load GCC/10.3.0
+
+# set number of threads to use
+export OMP_NUM_THREADS=5
 
 ./hello_omp

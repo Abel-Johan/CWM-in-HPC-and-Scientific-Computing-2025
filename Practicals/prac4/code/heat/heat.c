@@ -6,8 +6,24 @@
 #define MAX( A, B ) ( (A) > (B) ? (A) : (B) )
 #define PI 3.14159265358979323846264338327950288419716939937510582
 
-int main( void ) {
+double wall_clock_time (void) {
 
+  # include <sys/time.h>
+  # define MILLION 1000000.0
+
+  double secs;
+  struct timeval tp;
+
+  gettimeofday (&tp,NULL);
+  secs = (MILLION * (double) tp.tv_sec + (double) tp.tv_usec) / MILLION;
+  return secs;
+
+}
+
+
+int main( void ) {
+  // timing variables
+  double time_start, time_end;
   /* Example program to solve the heat equation in 1D in serial */
 
   double nu;
@@ -74,6 +90,10 @@ int main( void ) {
   u [ n - 1 ] = 0.0;
   uo[ n - 1 ] = 0.0;
 
+// start time
+  time_start = wall_clock_time ( );
+
+
   /* Initial values to be solved on the grid */
   for( j = 1; j < n - 1; j++ )
     u[ j ] = sin( j * PI / L );
@@ -115,6 +135,12 @@ int main( void ) {
     rms += du*du;
   }
   printf( "The RMS error in the final solution is %-#14.8g\n", sqrt(rms/((double) n)) );
+
+  // end time
+  time_end = wall_clock_time ( );
+
+  printf(" process time      = %e s\n", time_end - time_start);
+
 
   return EXIT_SUCCESS;
 

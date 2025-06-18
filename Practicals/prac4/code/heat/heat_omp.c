@@ -11,7 +11,7 @@
 #define PI 3.14159265358979323846264338327950288419716939937510582
 
 int main( void ) {
-
+  double time_start, time_end;
   /* Example program to solve the heat equation in 1D in serial */
 
   double nu;
@@ -78,19 +78,20 @@ int main( void ) {
   u [ n - 1 ] = 0.0;
   uo[ n - 1 ] = 0.0;
 
-  /* Initial values to be solved on the grid */
-  /* ... */
-  for( j = 1; j < n - 1; j++ ){
-    u[ j ] = sin( j * PI / L );
-  }
-
   /* All set up so now solve the equations at each time step*/
+// start time
+  time_start = omp_get_wtime ( );
 
   /* Start of the parallel region - make sure that you enclose all the parallel
      stuff in braces !! */
-#pragma omp parallel default( none ) private( t, j, du_loc ) shared( n, n_time_steps, nu, u, uo, du )
+#pragma omp parallel default( none ) private( t, j, du_loc ) shared( n, n_time_steps, nu, u, uo, du, L, rms )
   {
-
+    /* Initial values to be solved on the grid */
+    /* ... */
+#pragma omp for
+    for( j = 1; j < n - 1; j++ ){
+       u[ j ] = sin( j * PI / L );
+    }
     /* Time loop */
     for (t=0; t<n_time_steps; t++) {
       
@@ -123,7 +124,7 @@ int main( void ) {
       }
       /* Make sure that all threads have the correct value of du */
 #pragma omp barrier
-      
+
       /* Occasionally report the maximum change as the temperature distribution 
 	 relaxes */
       /* Make sure only thread zero does the printning - again using
@@ -134,22 +135,28 @@ int main( void ) {
 	if( t%10 == 0 || t == n_time_steps - 1 )
 	  printf( "At timestep %5i the maxmimum change in the solution is %-#14.8g\n",
 		  t, du );
+
 #ifdef _OPENMP
       }
 #endif
-	
+
     }
 
   }
 
   /* Check the solution against the exact, analytic answer */
   rms = 0.0;
-  /* ... */
+#pragma omp parallel default( none ) private( j ) shared( n, n_time_steps, nu, u, du, L, rms )
+#pragma omp for reduction(+:rms)
     for (j=1; j<n-1; j++) {
       du = u[ j ] - sin( j * PI / L ) *  exp( - n_time_steps * nu * PI * PI / ( L * L ) );
       rms += du*du;
     }
   printf( "The RMS error in the final solution is %-#14.8g\n", sqrt(rms/((double) n)) );
+
+  // end time
+  time_end = omp_get_wtime ( );
+  printf(" process time      = %e s\n", time_end - time_start);
 
   return EXIT_SUCCESS;
 
