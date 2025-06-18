@@ -1,7 +1,7 @@
 #!/bin/bash
 # set the number of nodes and processes per node
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=16
+#SBATCH --ntasks-per-node=4
 #SBATCH --partition=short
 
 # set max wallclock time

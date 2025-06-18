@@ -6,6 +6,7 @@ int main(void)
   int nt; // number of threads
   int it; // thread id (0 to nt-1)
 
+  // Scope the variables and create the threads
   # pragma omp parallel default(none) private(nt,it)
   {
     // retrieve size of thread pool
