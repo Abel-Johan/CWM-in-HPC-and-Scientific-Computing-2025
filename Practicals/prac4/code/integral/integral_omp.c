@@ -64,7 +64,7 @@ double trapInt_OMP (double a, double b, int N) {
 //                             M  A  I  N                              //
 //                                                                     //
 // ------------------------------------------------------------------- //
-
+int main (void) {
 
   // main variables
   int    N;

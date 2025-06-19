@@ -9,20 +9,14 @@
 #SBATCH --gres=gpu:1
 
 # set name of job
-#SBATCH --job-name=integral
+#SBATCH --job-name=cuFFT-C2C
 
 # Use our reservation
 #SBATCH --reservation=250620-cwm
 
-
-module purge
-module load GCC/10.3.0
-
 export OMP_NUM_THREADS=16
 
-./integral_omp < integralE4.inp
+module purge
+module load CUDA
 
-./integral_omp < integralE5.inp
-
-./integral_omp < integralE6.inp
-
+./cuRAND_part_c
