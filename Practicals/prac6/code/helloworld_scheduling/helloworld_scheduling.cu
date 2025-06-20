@@ -38,7 +38,9 @@
 // write your kernel here
 
 //----------------------------------------------------------------------
-
+__global__ void helloworld_blocks(void) {
+  printf("Hello world from block %d\n", blockIdx.x);
+}
 
 //----------------------------------------------------------------------
 // TASK 2.0: Write a "Hello world" kernel which output "Hello world" but 
@@ -51,6 +53,9 @@
 // write your kernel here
 
 //----------------------------------------------------------------------
+__global__ void helloworld_blocks_threads(void) {
+  printf("Hello world from block %d, thread %d\n", blockIdx.x, threadIdx.x);
+}
 
 
 //----------------------------------------------------------------------
@@ -72,7 +77,11 @@
 // write your kernel here
 
 //----------------------------------------------------------------------
-
+__global__ void helloworld_warps(void) {
+  if (threadIdx.x % 32 == 0) {
+    printf("Hello world from block %d, warp %d\n", blockIdx.x, threadIdx.x/32);
+  }
+}
 
 int main(void) {
   // initiate GPU
@@ -100,7 +109,8 @@ int main(void) {
   // put your code here
   
   //----------------------------------------------------------------------
-
+  // int nblocks=10, nthreads=1;
+  // helloworld_blocks<<<nblocks, nthreads>>>();
   //----------------------------------------------------------------------
   // TASK 2.1: execute your "Hello world" kernel from TASK 2.0 on about  
   // 5 blocks each containing about 10 threads. When you configured the kernel
@@ -115,8 +125,8 @@ int main(void) {
   // put your code here
   
   //----------------------------------------------------------------------
-  
-  
+  // int nblocks=5, nthreads=10;
+  // helloworld_blocks_threads<<<nblocks, nthreads>>>();
   //----------------------------------------------------------------------
   // TASK 3.1: execute your "Hello world" kernel from TASK 3.0 on about  
   // 5 blocks each containing about 320 threads. When you configured the kernel
@@ -133,7 +143,8 @@ int main(void) {
   // put your code here
   
   //----------------------------------------------------------------------
-  
+  int nblocks=5, nthreads=320;
+  helloworld_warps<<<nblocks, nthreads>>>();
   cudaDeviceReset();
   return (0);
 }

@@ -65,7 +65,9 @@ void Check_errors(int *GPU_sum2, int *GPU_sum4, int *h_input, size_t size){
 // put your kernel here
 
 //----------------------------------------------------------------------
-
+__global__ void compute_decimation(int *d_out, int *d_in) {
+	
+}
 
 
 int main(void) {
@@ -95,7 +97,22 @@ int main(void) {
 	
 	
 	//----------------------------------------------------------------------
-	
+	// initiate GPU
+	int deviceid = 0;
+	int devCount;
+	cudaGetDeviceCount(&devCount);
+	if(deviceid<devCount){
+		cudaSetDevice(deviceid);
+	} else {
+		printf("ERROR! Selected device is not available\n");
+		return(1);
+	}
+
+	// Dimensions
+	int nblocks=65536, nthreads=1024;
+
+	compute_decimation<<<nblocks, nthreads>>>(d_out, d_in);
+
 	Check_errors(h_GPU_sum2, h_GPU_sum4, h_input, N);
 	
 	// free memory on the host and the device

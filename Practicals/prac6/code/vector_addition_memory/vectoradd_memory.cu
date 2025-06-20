@@ -34,11 +34,11 @@
 //
 // To calculate the index of the data which given thread should operate
 // on use pre-set variables threadIdx, blockIdx, blockDim and gridDim.
-
-
-
 __global__ void vector_add_uncoalesced(float *d_C, float *d_A, float *d_B){
   // write your kernel here
+  int index = blockDim.x * blockIdx.x + threadIdx.x;
+  d_c[index] = d_A[index] + d_B[index];
+  }
 }
 //----------------------------------------------------------------------
 
@@ -54,7 +54,13 @@ __global__ void vector_add_uncoalesced(float *d_C, float *d_A, float *d_B){
 // write your kernel here
 __global__ void vector_add_coalesced(float *d_C, float *d_A, float *d_B){
   // write your kernel here
+  // Allocate shared memory
+  __shared__ float smem_array[M];
 
+  // Indexing
+  int index = blockDim. x * blockIdx.x + threadIdx.x;
+
+  // Each thread should load data into shared
 }
 //----------------------------------------------------------------------
 
@@ -137,6 +143,7 @@ int main(void) {
 	// put your code here
 	
 	//----------------------------------------------------------------------
+    vector_add_uncoalesced<<<, >>>(d_C, d_B, d_A);
   }
   timer.Stop();
   printf("Vector addition with coalesced memory access execution time: %f\n", timer.Elapsed()/10.0);

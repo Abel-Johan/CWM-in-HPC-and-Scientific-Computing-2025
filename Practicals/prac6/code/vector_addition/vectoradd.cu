@@ -9,7 +9,7 @@
 //         5) transfer results to the host (eventually)
 //         6) clean up (deallocate memory)
 //         Run your code
-//            
+//
 // You should follow this assignment in steps mentioned in above list. 
 // The TASK 1 correspond to initialization of the host, TASK 2 to 
 // initialization of the device and so on.
@@ -36,11 +36,11 @@
 // write your kernel here
 
 //----------------------------------------------------------------------
-
-
-
-
-
+__global__ void vector_add(int *d_C, int *d_A, int *d_B) {
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
+  d_C[index] = d_A[index] + d_B[index];
+  // if (index % 524288 == 0) printf("Sanity check %d", d_C[index]);
+}
 
 int main(void) {
   //----------------------------------------------------------------------
@@ -75,8 +75,18 @@ int main(void) {
   // put your code here
 
   //----------------------------------------------------------------------
-  
-  
+  int *h_A, *h_B, *h_C;
+
+  h_A = (int*) malloc(N * sizeof(int));
+  h_B = (int*) malloc(N * sizeof(int));
+  h_C = (int*) malloc(N * sizeof(int));
+
+  for (size_t f=0; f<N; f++) {
+    h_A[f] = f + 1;
+    h_B[f] = 2*f + 1;
+    h_C[f] = 0;
+  }
+
   //----------------------------------------------------------------------
   // TASK 2: In this task we initialize the GPU, declare variables which 
   //         resided on the GPU and then allocate memory for them.
@@ -93,8 +103,22 @@ int main(void) {
   // put your code here
   
   //----------------------------------------------------------------------
-  
-  
+  int deviceid = 0;
+  int devCount;
+  cudaGetDeviceCount(&devCount);
+  if(deviceid<devCount){
+    cudaSetDevice(deviceid);
+  }
+  else {
+    printf("ERROR! Selected device is not available\n");
+    return(1);
+  }
+
+  int *d_A, *d_B, *d_C;
+
+  cudaMalloc(&d_A, N * sizeof(int));
+  cudaMalloc(&d_B, N * sizeof(int));
+  cudaMalloc(&d_C, N * sizeof(int));
   //----------------------------------------------------------------------
   // TASK 3: Here we would like to copy the data from the host to the device
   
@@ -107,13 +131,13 @@ int main(void) {
   // put your code here
 
   //----------------------------------------------------------------------
-
-  
+  cudaMemcpy(d_A, h_A, N * sizeof(int), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_B, h_B, N * sizeof(int), cudaMemcpyHostToDevice);
 
   //----------------------------------------------------------------------
   // TASK 4.0: To write your vector addition kernel. Full task is above.
   //----------------------------------------------------------------------
-  
+
   //----------------------------------------------------------------------
   // TASK 4.1: Now having data on the device and having a kernel for vector
   //           addition we would like to execute that kernel. 
@@ -128,19 +152,21 @@ int main(void) {
   // put your code here
   
   //----------------------------------------------------------------------
-
+  dim3 Gd(256, 8, 8);
+  dim3 Bd(8, 8, 8);
+  vector_add<<<Gd, Bd>>>(d_C, d_A, d_B);
   //----------------------------------------------------------------------
   // TASK 5: Transfer data to the host.
   
   // put your code here
 
   //----------------------------------------------------------------------
+  cudaMemcpy(h_C, d_C, N * sizeof(int), cudaMemcpyDeviceToHost);
   
-  
-  if(N>10){
+  if(N>1000){
 	  printf("Check:\n");
-	  for(int f=0; f<10; f++){
-		  printf("Is %f + %f = %f?\n", h_A[f], h_B[f], h_C[f]);
+	  for(int f=0; f<1000; f++){
+		  printf("Is %d + %d = %d?\n", h_A[f], h_B[f], h_C[f]);
 	  }
   }
   
@@ -153,7 +179,12 @@ int main(void) {
   // put your code here
 
   //----------------------------------------------------------------------
-  
+  cudaFree(d_A);
+  cudaFree(d_B);
+  cudaFree(d_C);
+  free(h_A);
+  free(h_B);
+  free(h_C);
   // TASK 7: Run your code
   return(0);
 }

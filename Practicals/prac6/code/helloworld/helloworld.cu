@@ -19,6 +19,9 @@
 // write your kernel here
 
 //----------------------------------------------------------------------
+__global__ void helloworld(void) {
+  printf("Hello world\n");
+}
 
 int main(void) {
   //----------------------------------------------------------------------
@@ -26,13 +29,20 @@ int main(void) {
   //
   // You can also try to write a check if there is a device with that id,
   // so the code behaves nicely when it fails
-  
+
   // write you GPU initialization here
 
   //----------------------------------------------------------------------
 
-  
-  
+  int deviceid = 0;
+  int devCount;
+
+  cudaGetDeviceCount(&devCount);
+  if (deviceid < devCount) {
+    cudaSetDevice(deviceid);
+  } else {
+    return(1);
+  }
   //----------------------------------------------------------------------
   // TASK 3: execute your "Hello world" kernel on 1 block with 5 threads 
   //         using execution configuration syntax.
@@ -43,7 +53,8 @@ int main(void) {
   // execute your "Hello world" kernel here
   
   //----------------------------------------------------------------------
- 
+  int nblocks=1, nthreads=5;
+  helloworld<<<nblocks, nthreads>>>();
   cudaDeviceReset(); 
   return (0);
 }
